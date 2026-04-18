@@ -3,8 +3,15 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --card: #ffffff;
+  --card-foreground: #171717;
+  --muted: rgba(0, 0, 0, 0.04);
+  --muted-foreground: rgba(24, 24, 27, 0.72);
+  --border: rgba(0, 0, 0, 0.10);
+  --ring: rgba(16, 185, 129, 0.40);
   --arabic-font-size: 28px;
   --translation-font-size: 16px;
+  color-scheme: light;
 }
 
 @theme inline {
@@ -14,17 +21,49 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html.dark {
+  --background: #09090b;
+  --foreground: #fafafa;
+  --card: #09090b;
+  --card-foreground: #fafafa;
+  --muted: rgba(255, 255, 255, 0.06);
+  --muted-foreground: rgba(244, 244, 245, 0.72);
+  --border: rgba(255, 255, 255, 0.10);
+  --ring: rgba(16, 185, 129, 0.45);
+  color-scheme: dark;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+.skip-link {
+  position: absolute;
+  left: 0.75rem;
+  top: 0.75rem;
+  z-index: 50;
+  transform: translateY(-180%);
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  background: color-mix(in oklab, var(--background) 85%, transparent);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--foreground);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+  outline: none;
+  box-shadow: 0 0 0 4px var(--ring);
+}
+
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--ring);
 }
 
 .font-arabic-amiri {

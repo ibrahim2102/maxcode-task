@@ -119,7 +119,7 @@ export function HomePage({ surahs }: { surahs: SurahSummary[] }) {
                   <Link
                     key={`${m.surahId}-${m.ayahNumber}-${m.translation}`}
                     href={`/surah/${m.surahId}#ayah-${m.ayahNumber}`}
-                    className="rounded-2xl border border-black/10 bg-white p-4 shadow-sm transition hover:border-emerald-500/40 hover:shadow-md dark:border-white/10 dark:bg-zinc-950"
+                    className="focus-ring rounded-2xl border border-black/10 bg-white p-4 shadow-sm transition hover:border-emerald-500/40 hover:shadow-md dark:border-white/10 dark:bg-zinc-950"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="text-sm font-semibold text-zinc-950 dark:text-zinc-50">

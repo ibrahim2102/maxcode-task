@@ -13,9 +13,32 @@ export function AyahCard({ ayah }: { ayah: Ayah }) {
       id={`ayah-${ayah.number}`}
       className="rounded-2xl border border-black/10 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-zinc-950"
     >
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">
           Ayah {ayah.number}
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={async () => {
+              const text = `${ayah.arabic}\n\n${ayah.translation}`;
+              await navigator.clipboard.writeText(text);
+            }}
+            className="focus-ring rounded-full border border-black/10 px-3 py-1.5 text-xs font-medium text-zinc-900 hover:bg-black/[.03] dark:border-white/10 dark:text-zinc-50 dark:hover:bg-white/[.06]"
+          >
+            Copy
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              const url = new URL(window.location.href);
+              url.hash = `ayah-${ayah.number}`;
+              navigator.clipboard.writeText(url.toString());
+            }}
+            className="focus-ring rounded-full border border-black/10 px-3 py-1.5 text-xs font-medium text-zinc-900 hover:bg-black/[.03] dark:border-white/10 dark:text-zinc-50 dark:hover:bg-white/[.06]"
+          >
+            Copy link
+          </button>
         </div>
       </div>
 

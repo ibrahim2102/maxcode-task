@@ -7,7 +7,7 @@ export function SurahCard({ surah }: { surah: SurahSummary }) {
   return (
     <Link
       href={`/surah/${surah.id}`}
-      className="group rounded-2xl border border-black/10 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-500/40 hover:shadow-md dark:border-white/10 dark:bg-zinc-950"
+      className="focus-ring group rounded-2xl border border-black/10 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-500/40 hover:shadow-md dark:border-white/10 dark:bg-zinc-950"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">

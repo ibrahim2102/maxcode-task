@@ -4,10 +4,13 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 
 export type ArabicFont = "amiri" | "scheherazade";
 
+export type ThemeMode = "system" | "light" | "dark";
+
 export type ReaderSettings = {
   arabicFont: ArabicFont;
   arabicFontSizePx: number;
   translationFontSizePx: number;
+  theme: ThemeMode;
 };
 
 type SettingsContextValue = {
@@ -15,6 +18,7 @@ type SettingsContextValue = {
   setArabicFont: (font: ArabicFont) => void;
   setArabicFontSizePx: (px: number) => void;
   setTranslationFontSizePx: (px: number) => void;
+  setTheme: (mode: ThemeMode) => void;
   reset: () => void;
 };
 
@@ -24,10 +28,19 @@ const defaultSettings: ReaderSettings = {
   arabicFont: "amiri",
   arabicFontSizePx: 28,
   translationFontSizePx: 16,
+  theme: "system",
 };
 
 function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n));
+}
+
+function applyTheme(mode: ThemeMode) {
+  const root = document.documentElement;
+  const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false;
+  const resolved = mode === "system" ? (prefersDark ? "dark" : "light") : mode;
+  root.classList.toggle("dark", resolved === "dark");
+  root.dataset.theme = mode;
 }
 
 function safeParseSettings(raw: string | null): ReaderSettings | null {
@@ -41,7 +54,11 @@ function safeParseSettings(raw: string | null): ReaderSettings | null {
       12,
       28,
     );
-    return { arabicFont: parsed.arabicFont, arabicFontSizePx, translationFontSizePx };
+    const theme: ThemeMode =
+      parsed.theme === "light" || parsed.theme === "dark" || parsed.theme === "system"
+        ? parsed.theme
+        : defaultSettings.theme;
+    return { arabicFont: parsed.arabicFont, arabicFontSizePx, translationFontSizePx, theme };
   } catch {
     return null;
   }
@@ -64,7 +81,18 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     document.documentElement.style.setProperty("--arabic-font-size", `${settings.arabicFontSizePx}px`);
     document.documentElement.style.setProperty("--translation-font-size", `${settings.translationFontSizePx}px`);
     document.documentElement.dataset.arabicFont = settings.arabicFont;
+    applyTheme(settings.theme);
   }, [settings]);
+
+  useEffect(() => {
+    const mql = window.matchMedia?.("(prefers-color-scheme: dark)");
+    if (!mql) return;
+    function onChange() {
+      if (settings.theme === "system") applyTheme("system");
+    }
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
+  }, [settings.theme]);
 
   const setArabicFont = useCallback((font: ArabicFont) => {
     setSettings((s) => ({ ...s, arabicFont: font }));
@@ -78,11 +106,15 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     setSettings((s) => ({ ...s, translationFontSizePx: clamp(px, 12, 28) }));
   }, []);
 
+  const setTheme = useCallback((mode: ThemeMode) => {
+    setSettings((s) => ({ ...s, theme: mode }));
+  }, []);
+
   const reset = useCallback(() => setSettings(defaultSettings), []);
 
   const value = useMemo<SettingsContextValue>(
-    () => ({ settings, setArabicFont, setArabicFontSizePx, setTranslationFontSizePx, reset }),
-    [settings, setArabicFont, setArabicFontSizePx, setTranslationFontSizePx, reset],
+    () => ({ settings, setArabicFont, setArabicFontSizePx, setTranslationFontSizePx, setTheme, reset }),
+    [settings, setArabicFont, setArabicFontSizePx, setTranslationFontSizePx, setTheme, reset],
   );
 
   return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;
